@@ -50,7 +50,7 @@ Advanced features such as AI assistance, user accounts, and payments are intenti
 
 ## 🛠️ Tech Stack (example)
 
-- Frontend: React / Vue / Nuxt
+- Frontend: React latest LTS
 - Styling: Tailwind CSS
 - State: Local storage
 - PDF: Browser print / PDF renderer
