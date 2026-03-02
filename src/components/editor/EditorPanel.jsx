@@ -12,7 +12,14 @@ import {
     sortableKeyboardCoordinates,
     verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
-import { User } from 'lucide-react'
+import {
+    Box,
+    Typography,
+    Paper,
+    Stack,
+    Divider
+} from '@mui/material'
+import { User as UserIcon } from 'lucide-react'
 
 import SectionWrapper from './SectionWrapper'
 import PersonalInfoForm from './PersonalInfoForm'
@@ -69,21 +76,42 @@ export default function EditorPanel({
     }
 
     return (
-        <div className="h-full overflow-y-auto p-5 no-print">
+        <Box
+            className="no-print"
+            sx={{
+                height: '100%',
+                overflowY: 'auto',
+                p: 2.5,
+                bgcolor: 'background.default',
+                '&::-webkit-scrollbar': { width: 6 },
+                '&::-webkit-scrollbar-thumb': { bgcolor: 'divider', borderRadius: 3 }
+            }}
+        >
             {/* Personal Info */}
-            <div className="mb-3 bg-white border border-surface-200 rounded-xl shadow-sm
-                      hover:shadow-md transition-smooth overflow-hidden">
-                <div className="flex items-center gap-2 px-4 py-3 bg-surface-50/50">
-                    <User size={16} className="text-primary-500" />
-                    <h3 className="text-sm font-semibold text-surface-700">Personal Information</h3>
-                </div>
-                <div className="px-4 pb-4 pt-2">
+            <Paper
+                sx={{
+                    mb: 2,
+                    borderRadius: 3,
+                    overflow: 'hidden',
+                    '&:hover': { boxShadow: '0 4px 12px rgba(0,0,0,0.05)' },
+                    transition: 'box-shadow 0.2s ease-in-out'
+                }}
+            >
+                <Box sx={{ px: 2, py: 1.5, bgcolor: 'rgba(0,0,0,0.02)', display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                    <UserIcon size={18} style={{ color: '#3b82f6' }} />
+                    <Typography variant="subtitle2" fontWeight={700} color="text.primary">
+                        Personal Information
+                    </Typography>
+                </Box>
+                <Box sx={{ p: 2 }}>
                     <PersonalInfoForm
                         personal={cv.personal}
                         onUpdate={updatePersonal}
                     />
-                </div>
-            </div>
+                </Box>
+            </Paper>
+
+            <Divider sx={{ mb: 2, borderStyle: 'dashed' }} />
 
             {/* Sortable Sections */}
             <DndContext
@@ -95,17 +123,19 @@ export default function EditorPanel({
                     items={cv.sections.map(s => s.id)}
                     strategy={verticalListSortingStrategy}
                 >
-                    {cv.sections.map(section => (
-                        <SectionWrapper
-                            key={section.id}
-                            section={section}
-                            onToggleVisibility={toggleSectionVisibility}
-                        >
-                            {renderSectionForm(section)}
-                        </SectionWrapper>
-                    ))}
+                    <Stack spacing={2}>
+                        {cv.sections.map(section => (
+                            <SectionWrapper
+                                key={section.id}
+                                section={section}
+                                onToggleVisibility={toggleSectionVisibility}
+                            >
+                                {renderSectionForm(section)}
+                            </SectionWrapper>
+                        ))}
+                    </Stack>
                 </SortableContext>
             </DndContext>
-        </div>
+        </Box>
     )
 }

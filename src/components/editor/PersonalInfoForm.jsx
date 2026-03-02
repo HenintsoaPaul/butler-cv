@@ -1,3 +1,4 @@
+import { TextField, Stack, Box, Grid, InputAdornment } from '@mui/material'
 import { User, Mail, Phone, MapPin, Linkedin, Globe, FileText } from 'lucide-react'
 
 export default function PersonalInfoForm({ personal, onUpdate }) {
@@ -12,41 +13,50 @@ export default function PersonalInfoForm({ personal, onUpdate }) {
     ]
 
     return (
-        <div className="space-y-3">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <Stack spacing={2.5}>
+            <Grid container spacing={2}>
                 {fields.map(({ key, label, icon: Icon, placeholder, type }) => (
-                    <div key={key} className={key === 'name' || key === 'title' ? 'sm:col-span-2' : ''}>
-                        <label className="flex items-center gap-1.5 text-xs font-medium text-surface-500 mb-1">
-                            <Icon size={13} />
-                            {label}
-                        </label>
-                        <input
+                    <Grid item xs={12} sm={key === 'name' || key === 'title' ? 12 : 6} key={key}>
+                        <TextField
+                            fullWidth
+                            label={label}
+                            variant="outlined"
+                            size="small"
                             type={type || 'text'}
                             value={personal[key] || ''}
                             onChange={e => onUpdate(key, e.target.value)}
                             placeholder={placeholder}
-                            className="w-full px-3 py-2 text-sm bg-white border border-surface-200 rounded-lg
-                         hover:border-surface-300 focus:border-primary-400
-                         transition-smooth placeholder:text-surface-300"
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <Icon size={16} color="#64748b" />
+                                    </InputAdornment>
+                                ),
+                            }}
+                            sx={{
+                                '& .MuiOutlinedInput-root': {
+                                    borderRadius: 2,
+                                    '&:hover fieldset': { borderColor: 'primary.light' },
+                                },
+                            }}
                         />
-                    </div>
+                    </Grid>
                 ))}
-            </div>
-            <div>
-                <label className="flex items-center gap-1.5 text-xs font-medium text-surface-500 mb-1">
-                    <FileText size={13} />
-                    Professional Summary
-                </label>
-                <textarea
-                    value={personal.summary || ''}
-                    onChange={e => onUpdate('summary', e.target.value)}
-                    placeholder="Brief summary of your professional background..."
-                    rows={3}
-                    className="w-full px-3 py-2 text-sm bg-white border border-surface-200 rounded-lg
-                     hover:border-surface-300 focus:border-primary-400
-                     transition-smooth placeholder:text-surface-300 resize-none"
-                />
-            </div>
-        </div>
+            </Grid>
+            <TextField
+                fullWidth
+                label="Professional Summary"
+                multiline
+                rows={4}
+                value={personal.summary || ''}
+                onChange={e => onUpdate('summary', e.target.value)}
+                placeholder="Brief summary of your professional background..."
+                sx={{
+                    '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                    },
+                }}
+            />
+        </Stack>
     )
 }

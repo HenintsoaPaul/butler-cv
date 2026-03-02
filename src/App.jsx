@@ -1,3 +1,7 @@
+import { useRef, useState } from 'react'
+import { useReactToPrint } from 'react-to-print'
+import { useCvStore } from './hooks/useCvStore'
+import { TemplateSelector } from './components/preview/TemplateSelector'
 import {
     AppBar,
     Toolbar,
@@ -7,8 +11,6 @@ import {
     Stack,
     Box,
     Divider,
-    Container,
-    Tooltip
 } from '@mui/material'
 import {
     Download as DownloadIcon,
