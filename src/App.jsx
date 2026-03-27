@@ -1,7 +1,9 @@
 import { useRef, useState } from 'react'
 import { useReactToPrint } from 'react-to-print'
 import { useCvStore } from './hooks/useCvStore'
-import { TemplateSelector } from './components/preview/TemplateSelector'
+import TemplateSelector from './components/preview/TemplateSelector'
+import EditorPanel from './components/editor/EditorPanel'
+import PreviewPanel from './components/preview/PreviewPanel'
 import {
     AppBar,
     Toolbar,
