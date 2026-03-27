@@ -1,75 +1,117 @@
-# butler-cv
+# 🤵 Butler CV
 
-A fast, minimal, and opinionated CV builder that helps you create a clean, professional resume in minutes.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Vitest](https://img.shields.io/badge/Vitest-6E9F18?style=for-the-badge&logo=vitest&logoColor=white)](https://vitest.dev/)
 
-## 🎯 Goal
+A fast, minimal, and opinionated CV builder designed to create professional resumes in minutes, not hours.
 
-The goal of this project is to remove friction from CV creation by:
-- Using clean, ATS-friendly templates
-- Providing strong defaults
-- Avoiding unnecessary customization
-- Focusing on speed and clarity
+---
 
-No design skills required.
+## 🎯 Project Goal
+
+**Butler CV** aims to remove the friction from CV creation. We believe you shouldn't need a design degree to look professional on paper.
+
+- **ATS-Friendly**: Clean layouts that pass through automated screening systems.
+- **Strong Defaults**: Pre-configured styles that look great out of the box.
+- **Opinionated**: Fewer choices means less time wasted on fonts and margins.
+- **Zero Account Required**: Your data stays in your browser.
 
 ---
 
 ## ✨ Features
 
-- Live CV preview
-- Simple form-based editing
-- Section reordering
-- Hide/show CV sections
-- Clean, professional templates
-- PDF export
-- Local autosave (no account required)
+- ⚡ **Live Preview**: See changes instantly as you type.
+- 📋 **Form-Based Editing**: Simple inputs for all your career details.
+- 🔄 **Sortable Sections**: Drag and drop to reorder your experience, skills, and more.
+- 👁️ **Toggle Visibility**: Hide sections or entries without deleting them.
+- 💾 **Local Autosave**: Data persists automatically to your browser's local storage.
+- 📄 **PDF Export**: Generate high-quality PDFs using modern browser technologies.
+- 🧪 **Regression Tested**: Core logic is covered by automated unit tests ensuring stability.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Framework**: [React 19](https://react.dev/)
+- **Build Tool**: [Vite](https://vitejs.dev/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/) & [MUI (Material UI)](https://mui.com/)
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **Drag & Drop**: [@dnd-kit](https://dndkit.com/)
+- **PDF Generation**: [html2canvas](https://html2canvas.hertzen.com/) & [jsPDF](https://github.com/parallax/jsPDF)
+- **Testing**: [Vitest](https://vitest.dev/) & [Testing Library](https://testing-library.com/)
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (LTS recommended)
+- `npm` or `yarn`
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/HenintsoaPaul/butler-cv.git
+
+# Install dependencies
+npm install
+```
+
+### Development
+
+```bash
+# Start the development server
+npm run dev
+```
+
+### Testing
+
+We use Vitest for regression testing.
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm run test -- --watch
+```
 
 ---
 
 ## 🧩 CV Sections
 
-- Personal information
-- Professional experience
-- Education
-- Skills
-- Optional sections (projects, certifications)
-
----
-
-## 🚀 MVP Scope
-
-The MVP focuses on:
-- One or two templates
-- One CV per user
-- Local storage persistence
-- PDF generation
-
-Advanced features such as AI assistance, user accounts, and payments are intentionally excluded from the MVP.
-
----
-
-## 🛠️ Tech Stack (example)
-
-- Frontend: React latest LTS
-- Styling: Tailwind CSS
-- State: Local storage
-- PDF: Browser print / PDF renderer
-
----
-
-## 📌 Roadmap
-
-- [ ] Multiple templates
-- [ ] AI-assisted content suggestions
-- [ ] Job-specific CV guidance
-- [ ] User accounts & cloud sync
-- [ ] Version history
-- [ ] Paid premium templates
+- **Personal Information**: Name, Title, Contact Info, Summary.
+- **Professional Experience**: Roles, Companies, Dates, Achievements.
+- **Education**: Degrees, Institutions, GPA.
+- **Skills**: Categorized skills (Languages, Tools, etc.).
+- **Projects**: Portfolio highlights with links.
+- **Certifications**: Professional credentials.
 
 ---
 
 ## 🧠 Philosophy
 
-Less choice. Better defaults. Faster results.
+> *"Less choice. Better defaults. Faster results."*
 
-A CV should be written in minutes, not hours.
+Butler CV focuses on content over decoration. By limiting customization to what actually matters for recruiters, we ensure you spend your time writing about your achievements rather than fighting with a text editor.
+
+---
+
+## 📋 Roadmap
+
+- [ ] Multiple Template Styles (Modern, Elegant, Creative)
+- [ ] AI-Assisted Content Suggestions
+- [ ] Job-Specific CV Guidance
+- [ ] Import from JSON/LinkedIn
+- [ ] Cloud Synchronization (Opt-in)
+
+---
+
+## 📄 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
