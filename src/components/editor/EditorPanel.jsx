@@ -12,7 +12,14 @@ import {
     sortableKeyboardCoordinates,
     verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
-import { User } from 'lucide-react'
+import {
+    Box,
+    Typography,
+    Paper,
+    Stack,
+    Divider
+} from '@mui/material'
+import { User as UserIcon, Briefcase, GraduationCap, Award, Star, FolderOpen } from 'lucide-react'
 
 import SectionWrapper from './SectionWrapper'
 import PersonalInfoForm from './PersonalInfoForm'
@@ -29,6 +36,24 @@ const SECTION_FORMS = {
     projects: ProjectsForm,
     certifications: CertificationsForm,
 }
+
+const CategoryHeader = ({ title, icon: Icon }) => (
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mt: 3, mb: 1.5, px: 0.5 }}>
+        <Icon size={16} style={{ color: '#64748b' }} />
+        <Typography 
+            variant="caption" 
+            fontWeight={800} 
+            sx={{ 
+                textTransform: 'uppercase', 
+                letterSpacing: '0.1em', 
+                color: 'text.secondary',
+                fontSize: '0.7rem' 
+            }}
+        >
+            {title}
+        </Typography>
+    </Box>
+)
 
 export default function EditorPanel({
     cv,
@@ -68,44 +93,88 @@ export default function EditorPanel({
         )
     }
 
+    // Grouping sections for display
+    const coreSections = cv.sections.filter(s => ['experience', 'education'].includes(s.type))
+    const extraSections = cv.sections.filter(s => !['experience', 'education'].includes(s.type))
+
     return (
-        <div className="h-full overflow-y-auto p-5 no-print">
-            {/* Personal Info */}
-            <div className="mb-3 bg-white border border-surface-200 rounded-xl shadow-sm
-                      hover:shadow-md transition-smooth overflow-hidden">
-                <div className="flex items-center gap-2 px-4 py-3 bg-surface-50/50">
-                    <User size={16} className="text-primary-500" />
-                    <h3 className="text-sm font-semibold text-surface-700">Personal Information</h3>
-                </div>
-                <div className="px-4 pb-4 pt-2">
+        <Box
+            className="no-print"
+            sx={{
+                height: '100%',
+                overflowY: 'auto',
+                p: 2.5,
+                bgcolor: 'background.default',
+                '&::-webkit-scrollbar': { width: 6 },
+                '&::-webkit-scrollbar-thumb': { bgcolor: 'divider', borderRadius: 3 }
+            }}
+        >
+            {/* Category: Profile */}
+            <CategoryHeader title="Identity & Contact" icon={UserIcon} />
+            <Paper
+                sx={{
+                    mb: 2,
+                    borderRadius: 3,
+                    overflow: 'hidden',
+                    border: 1,
+                    borderColor: 'divider',
+                    '&:hover': { borderColor: 'primary.light', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' },
+                    transition: 'all 0.2s ease-in-out'
+                }}
+            >
+                <Box sx={{ p: 2 }}>
                     <PersonalInfoForm
                         personal={cv.personal}
                         onUpdate={updatePersonal}
                     />
-                </div>
-            </div>
+                </Box>
+            </Paper>
 
-            {/* Sortable Sections */}
             <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
                 onDragEnd={handleDragEnd}
             >
+                {/* Category: Professional Background */}
+                <CategoryHeader title="Professional Background" icon={Briefcase} />
                 <SortableContext
-                    items={cv.sections.map(s => s.id)}
+                    items={coreSections.map(s => s.id)}
                     strategy={verticalListSortingStrategy}
                 >
-                    {cv.sections.map(section => (
-                        <SectionWrapper
-                            key={section.id}
-                            section={section}
-                            onToggleVisibility={toggleSectionVisibility}
-                        >
-                            {renderSectionForm(section)}
-                        </SectionWrapper>
-                    ))}
+                    <Stack spacing={2}>
+                        {coreSections.map(section => (
+                            <SectionWrapper
+                                key={section.id}
+                                section={section}
+                                onToggleVisibility={toggleSectionVisibility}
+                            >
+                                {renderSectionForm(section)}
+                            </SectionWrapper>
+                        ))}
+                    </Stack>
+                </SortableContext>
+
+                {/* Category: Skills & More */}
+                <CategoryHeader title="Skills & Achievements" icon={Award} />
+                <SortableContext
+                    items={extraSections.map(s => s.id)}
+                    strategy={verticalListSortingStrategy}
+                >
+                    <Stack spacing={2}>
+                        {extraSections.map(section => (
+                            <SectionWrapper
+                                key={section.id}
+                                section={section}
+                                onToggleVisibility={toggleSectionVisibility}
+                            >
+                                {renderSectionForm(section)}
+                            </SectionWrapper>
+                        ))}
+                    </Stack>
                 </SortableContext>
             </DndContext>
-        </div>
+            
+            <Box sx={{ height: 40 }} /> {/* Spacer at bottom */}
+        </Box>
     )
 }

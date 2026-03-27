@@ -1,7 +1,23 @@
 import { useState } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { GripVertical, Eye, EyeOff, ChevronDown, ChevronRight } from 'lucide-react'
+import {
+    Paper,
+    Box,
+    IconButton,
+    Typography,
+    Stack,
+    Chip,
+    Tooltip,
+    Collapse,
+} from '@mui/material'
+import {
+    GripVertical as GripIcon,
+    Eye as EyeIcon,
+    EyeOff as EyeOffIcon,
+    ChevronDown as DownIcon,
+    ChevronRight as RightIcon
+} from 'lucide-react'
 
 export default function SectionWrapper({
     section,
@@ -22,67 +38,95 @@ export default function SectionWrapper({
     const style = {
         transform: CSS.Transform.toString(transform),
         transition,
-        opacity: isDragging ? 0.5 : 1,
-        zIndex: isDragging ? 10 : 'auto',
+        opacity: isDragging ? 0.6 : 1,
+        zIndex: isDragging ? 1000 : 'auto',
     }
 
     return (
-        <div
+        <Paper
             ref={setNodeRef}
             style={style}
-            className={`mb-3 bg-white border border-surface-200 rounded-xl overflow-hidden
-                  transition-smooth ${isDragging ? 'shadow-lg' : 'shadow-sm hover:shadow-md'}`}
+            sx={{
+                borderRadius: 3,
+                overflow: 'hidden',
+                border: 1,
+                borderColor: 'divider',
+                bgcolor: 'background.paper',
+                boxShadow: isDragging ? 4 : 0,
+                transition: 'all 0.2s ease-in-out',
+                '&:hover': {
+                    borderColor: 'primary.light',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.06)'
+                }
+            }}
         >
             {/* Header */}
-            <div className="flex items-center gap-2 px-4 py-3 bg-surface-50/50">
-                <button
+            <Stack
+                direction="row"
+                spacing={1}
+                alignItems="center"
+                sx={{
+                    px: 1.5,
+                    py: 1,
+                    bgcolor: 'rgba(0,0,0,0.01)',
+                    borderBottom: collapsed ? 0 : 1,
+                    borderColor: 'divider'
+                }}
+            >
+                <IconButton
                     {...attributes}
                     {...listeners}
-                    className="p-1 text-surface-400 hover:text-surface-600 cursor-grab active:cursor-grabbing
-                     rounded transition-smooth"
-                    title="Drag to reorder"
+                    size="small"
+                    sx={{ cursor: 'grab', '&:active': { cursor: 'grabbing' }, color: 'text.disabled' }}
                 >
-                    <GripVertical size={16} />
-                </button>
+                    <GripIcon size={16} />
+                </IconButton>
 
-                <button
+                <Stack
+                    direction="row"
+                    spacing={1}
+                    alignItems="center"
                     onClick={() => setCollapsed(!collapsed)}
-                    className="flex items-center gap-2 flex-1 text-left"
+                    sx={{ flex: 1, cursor: 'pointer' }}
                 >
                     {collapsed ? (
-                        <ChevronRight size={16} className="text-surface-400" />
+                        <RightIcon size={16} color="#94a3b8" />
                     ) : (
-                        <ChevronDown size={16} className="text-surface-400" />
+                        <DownIcon size={16} color="#94a3b8" />
                     )}
-                    <h3 className="text-sm font-semibold text-surface-700">
+                    <Typography variant="subtitle2" fontWeight={700} color="text.primary">
                         {section.title}
-                    </h3>
+                    </Typography>
                     {!section.visible && (
-                        <span className="text-[10px] font-medium text-surface-400 bg-surface-100
-                             px-2 py-0.5 rounded-full">
-                            Hidden
-                        </span>
+                        <Chip
+                            label="Hidden"
+                            size="small"
+                            sx={{ height: 18, fontSize: '0.625rem', fontWeight: 700 }}
+                        />
                     )}
-                </button>
+                </Stack>
 
-                <button
-                    onClick={() => onToggleVisibility(section.id)}
-                    className={`p-1.5 rounded-lg transition-smooth ${section.visible
-                            ? 'text-primary-500 hover:bg-primary-50'
-                            : 'text-surface-400 hover:bg-surface-100'
-                        }`}
-                    title={section.visible ? 'Hide section' : 'Show section'}
-                >
-                    {section.visible ? <Eye size={15} /> : <EyeOff size={15} />}
-                </button>
-            </div>
+                <Tooltip title={section.visible ? 'Hide section' : 'Show section'}>
+                    <IconButton
+                        size="small"
+                        onClick={() => onToggleVisibility(section.id)}
+                        sx={{
+                            color: section.visible ? 'primary.main' : 'text.disabled',
+                            bgcolor: section.visible ? 'primary.50' : 'transparent',
+                            '&:hover': { bgcolor: section.visible ? 'primary.100' : 'rgba(0,0,0,0.04)' }
+                        }}
+                    >
+                        {section.visible ? <EyeIcon size={16} /> : <EyeOffIcon size={16} />}
+                    </IconButton>
+                </Tooltip>
+            </Stack>
 
             {/* Content */}
-            {!collapsed && (
-                <div className="px-4 pb-4 pt-2 animate-fade-in">
+            <Collapse in={!collapsed}>
+                <Box sx={{ p: 2 }}>
                     {children}
-                </div>
-            )}
-        </div>
+                </Box>
+            </Collapse>
+        </Paper>
     )
 }

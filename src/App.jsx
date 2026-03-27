@@ -1,30 +1,52 @@
 import { useRef, useState } from 'react'
 import { useReactToPrint } from 'react-to-print'
 import { useCvStore } from './hooks/useCvStore'
+import TemplateSelector from './components/preview/TemplateSelector'
 import EditorPanel from './components/editor/EditorPanel'
 import PreviewPanel from './components/preview/PreviewPanel'
-import TemplateSelector from './components/preview/TemplateSelector'
-import { Download, Check, Loader2, AlertCircle, RotateCcw, PanelLeftClose, PanelLeft } from 'lucide-react'
+import {
+    AppBar,
+    Toolbar,
+    Typography,
+    Button,
+    IconButton,
+    Stack,
+    Box,
+    Divider,
+} from '@mui/material'
+import {
+    Download as DownloadIcon,
+    Check as CheckIcon,
+    Loader2 as LoaderIcon,
+    AlertCircle as ErrorIcon,
+    RotateCcw as ResetIcon,
+    PanelLeftClose as CloseIcon,
+    PanelLeft as OpenIcon
+} from 'lucide-react'
+import { exportToPdf } from './utils/pdfUtils'
 
 function SaveIndicator({ status }) {
     const config = {
-        saved: { icon: Check, text: 'Saved', className: 'text-success' },
-        saving: { icon: Loader2, text: 'Saving...', className: 'text-surface-400 animate-spin-icon' },
-        error: { icon: AlertCircle, text: 'Error', className: 'text-danger' },
+        saved: { icon: CheckIcon, text: 'Saved', color: 'success.main' },
+        saving: { icon: LoaderIcon, text: 'Saving...', color: 'text.secondary' },
+        error: { icon: ErrorIcon, text: 'Error', color: 'error.main' },
     }
-    const { icon: Icon, text, className } = config[status] || config.saved
+    const { icon: Icon, text, color } = config[status] || config.saved
 
     return (
-        <span className={`flex items-center gap-1 text-xs font-medium ${className}`}>
-            <Icon size={13} className={status === 'saving' ? 'animate-spin' : ''} />
-            {text}
-        </span>
+        <Stack direction="row" spacing={0.5} alignItems="center" sx={{ color }}>
+            <Icon size={14} className={status === 'saving' ? 'animate-spin' : ''} />
+            <Typography variant="caption" fontWeight={600}>
+                {text}
+            </Typography>
+        </Stack>
     )
 }
 
 export default function App() {
     const previewRef = useRef(null)
     const [editorVisible, setEditorVisible] = useState(true)
+    const [isExporting, setIsExporting] = useState(false)
 
     const {
         cv,
@@ -45,88 +67,147 @@ export default function App() {
         documentTitle: `${cv.personal.name || 'CV'} - Resume`,
     })
 
+    const handleExport = async () => {
+        setIsExporting(true)
+        const filename = `${(cv.personal.name || 'CV').replace(/\s+/g, '_')}_Resume.pdf`
+        await exportToPdf(previewRef.current, filename)
+        setIsExporting(false)
+    }
+
     return (
-        <div className="h-screen flex flex-col bg-surface-50">
+        <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', bgcolor: 'background.default' }}>
             {/* Top Bar */}
-            <header className="flex-shrink-0 glass no-print border-b border-surface-200/50
-                          sticky top-0 z-50">
-                <div className="flex items-center justify-between px-5 py-3">
+            <AppBar
+                position="sticky"
+                color="inherit"
+                elevation={0}
+                sx={{
+                    borderBottom: 1,
+                    borderColor: 'divider',
+                    backdropFilter: 'blur(8px)',
+                    bgcolor: 'rgba(255, 255, 255, 0.8)',
+                    zIndex: (theme) => theme.zIndex.drawer + 1
+                }}
+            >
+                <Toolbar sx={{ justifyContent: 'space-between', px: { xs: 2, sm: 3 } }}>
                     {/* Left: Logo + Template */}
-                    <div className="flex items-center gap-5">
-                        <div className="flex items-center gap-2">
-                            <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-accent rounded-lg
-                              flex items-center justify-center text-white font-bold text-sm
-                              shadow-md shadow-primary-200">
+                    <Stack direction="row" spacing={2} alignItems="center">
+                        <Stack direction="row" spacing={1} alignItems="center">
+                            <Box
+                                sx={{
+                                    width: 32,
+                                    height: 32,
+                                    background: 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%)',
+                                    borderRadius: 1.5,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: 'white',
+                                    fontWeight: 'bold',
+                                    fontSize: '0.875rem',
+                                    boxShadow: '0 4px 6px -1px rgba(59, 130, 246, 0.2)'
+                                }}
+                            >
                                 B
-                            </div>
-                            <h1 className="text-lg font-bold bg-gradient-to-r from-surface-800 to-surface-600
-                             bg-clip-text text-transparent hidden sm:block">
+                            </Box>
+                            <Typography
+                                variant="h6"
+                                sx={{
+                                    fontWeight: 800,
+                                    background: 'linear-gradient(to right, #1e293b, #64748b)',
+                                    WebkitBackgroundClip: 'text',
+                                    WebkitTextFillColor: 'transparent',
+                                    display: { xs: 'none', sm: 'block' }
+                                }}
+                            >
                                 Butler CV
-                            </h1>
-                        </div>
-                        <div className="hidden md:block h-6 w-px bg-surface-200" />
-                        <div className="hidden md:block">
+                            </Typography>
+                        </Stack>
+
+                        <Divider orientation="vertical" flexItem sx={{ display: { xs: 'none', md: 'block' }, height: 24, alignSelf: 'center' }} />
+
+                        <Box sx={{ display: { xs: 'none', md: 'block' } }}>
                             <TemplateSelector
                                 activeTemplate={cv.templateId}
                                 onSelect={setTemplate}
                             />
-                        </div>
-                    </div>
+                        </Box>
+                    </Stack>
 
                     {/* Right: Actions */}
-                    <div className="flex items-center gap-3">
+                    <Stack direction="row" spacing={1.5} alignItems="center">
                         <SaveIndicator status={saveStatus} />
 
-                        <button
+                        <IconButton
                             onClick={() => setEditorVisible(!editorVisible)}
-                            className="p-2 text-surface-500 hover:text-surface-700 hover:bg-surface-100
-                         rounded-lg transition-smooth md:hidden"
-                            title={editorVisible ? 'Hide editor' : 'Show editor'}
+                            sx={{ display: { md: 'none' } }}
+                            size="small"
                         >
-                            {editorVisible ? <PanelLeftClose size={18} /> : <PanelLeft size={18} />}
-                        </button>
+                            {editorVisible ? <CloseIcon size={20} /> : <OpenIcon size={20} />}
+                        </IconButton>
 
-                        <button
+                        <Button
+                            startIcon={<ResetIcon size={16} />}
                             onClick={resetCv}
-                            className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium
-                         text-surface-500 hover:text-surface-700 hover:bg-surface-100
-                         rounded-lg transition-smooth"
-                            title="Reset to defaults"
+                            color="inherit"
+                            size="small"
+                            sx={{ color: 'text.secondary', display: { xs: 'none', sm: 'flex' } }}
                         >
-                            <RotateCcw size={14} />
-                            <span className="hidden sm:inline">Reset</span>
-                        </button>
+                            Reset
+                        </Button>
 
-                        <button
-                            onClick={handlePrint}
-                            className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium
-                         text-white bg-gradient-to-r from-primary-600 to-primary-500
-                         hover:from-primary-700 hover:to-primary-600
-                         rounded-lg shadow-md shadow-primary-200
-                         hover:shadow-lg hover:shadow-primary-300
-                         transition-smooth active:scale-[0.97]"
-                        >
-                            <Download size={15} />
-                            Export PDF
-                        </button>
-                    </div>
-                </div>
+                        <Stack direction="row" spacing={1}>
+                             <Button
+                                variant="outlined"
+                                onClick={handlePrint}
+                                size="small"
+                                sx={{ display: { xs: 'none', sm: 'flex' }, borderRadius: 2 }}
+                            >
+                                Print
+                            </Button>
+                            <Button
+                                variant="contained"
+                                startIcon={isExporting ? <LoaderIcon size={16} className="animate-spin" /> : <DownloadIcon size={16} />}
+                                onClick={handleExport}
+                                disabled={isExporting}
+                                disableElevation
+                                sx={{
+                                    borderRadius: 2,
+                                    background: 'linear-gradient(to right, #2563eb, #3b82f6)',
+                                    '&:hover': {
+                                        background: 'linear-gradient(to right, #1d4ed8, #2563eb)',
+                                    }
+                                }}
+                            >
+                                {isExporting ? 'Generating...' : 'Download PDF'}
+                            </Button>
+                        </Stack>
+                    </Stack>
+                </Toolbar>
 
                 {/* Mobile Template Selector */}
-                <div className="md:hidden px-5 pb-3">
+                <Box sx={{ display: { md: 'none' }, px: 2, pb: 2 }}>
                     <TemplateSelector
                         activeTemplate={cv.templateId}
                         onSelect={setTemplate}
                     />
-                </div>
-            </header>
+                </Box>
+            </AppBar>
 
             {/* Main Content */}
-            <main className="flex-1 flex overflow-hidden">
+            <Box component="main" sx={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
                 {/* Editor */}
                 {editorVisible && (
-                    <div className="w-full md:w-[440px] lg:w-[480px] flex-shrink-0 border-r border-surface-200
-                          bg-surface-50 overflow-hidden animate-slide-in">
+                    <Box
+                        sx={{
+                            width: { xs: '100%', md: 440, lg: 480 },
+                            flexShrink: 0,
+                            borderRight: 1,
+                            borderColor: 'divider',
+                            bgcolor: 'background.paper',
+                            overflow: 'hidden',
+                        }}
+                    >
                         <EditorPanel
                             cv={cv}
                             updatePersonal={updatePersonal}
@@ -137,14 +218,21 @@ export default function App() {
                             reorderSections={reorderSections}
                             toggleSectionVisibility={toggleSectionVisibility}
                         />
-                    </div>
+                    </Box>
                 )}
 
                 {/* Preview */}
-                <div className={`flex-1 overflow-hidden ${editorVisible ? 'hidden md:block' : ''}`}>
+                <Box
+                    sx={{
+                        flex: 1,
+                        overflow: 'hidden',
+                        display: editorVisible ? { xs: 'none', md: 'block' } : 'block',
+                        bgcolor: 'background.default'
+                    }}
+                >
                     <PreviewPanel cv={cv} ref={previewRef} />
-                </div>
-            </main>
-        </div>
+                </Box>
+            </Box>
+        </Box>
     )
 }
