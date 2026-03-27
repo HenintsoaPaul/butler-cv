@@ -19,7 +19,7 @@ import {
     Stack,
     Divider
 } from '@mui/material'
-import { User as UserIcon } from 'lucide-react'
+import { User as UserIcon, Briefcase, GraduationCap, Award, Star, FolderOpen } from 'lucide-react'
 
 import SectionWrapper from './SectionWrapper'
 import PersonalInfoForm from './PersonalInfoForm'
@@ -36,6 +36,24 @@ const SECTION_FORMS = {
     projects: ProjectsForm,
     certifications: CertificationsForm,
 }
+
+const CategoryHeader = ({ title, icon: Icon }) => (
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mt: 3, mb: 1.5, px: 0.5 }}>
+        <Icon size={16} style={{ color: '#64748b' }} />
+        <Typography 
+            variant="caption" 
+            fontWeight={800} 
+            sx={{ 
+                textTransform: 'uppercase', 
+                letterSpacing: '0.1em', 
+                color: 'text.secondary',
+                fontSize: '0.7rem' 
+            }}
+        >
+            {title}
+        </Typography>
+    </Box>
+)
 
 export default function EditorPanel({
     cv,
@@ -75,6 +93,10 @@ export default function EditorPanel({
         )
     }
 
+    // Grouping sections for display
+    const coreSections = cv.sections.filter(s => ['experience', 'education'].includes(s.type))
+    const extraSections = cv.sections.filter(s => !['experience', 'education'].includes(s.type))
+
     return (
         <Box
             className="no-print"
@@ -87,22 +109,19 @@ export default function EditorPanel({
                 '&::-webkit-scrollbar-thumb': { bgcolor: 'divider', borderRadius: 3 }
             }}
         >
-            {/* Personal Info */}
+            {/* Category: Profile */}
+            <CategoryHeader title="Identity & Contact" icon={UserIcon} />
             <Paper
                 sx={{
                     mb: 2,
                     borderRadius: 3,
                     overflow: 'hidden',
-                    '&:hover': { boxShadow: '0 4px 12px rgba(0,0,0,0.05)' },
-                    transition: 'box-shadow 0.2s ease-in-out'
+                    border: 1,
+                    borderColor: 'divider',
+                    '&:hover': { borderColor: 'primary.light', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' },
+                    transition: 'all 0.2s ease-in-out'
                 }}
             >
-                <Box sx={{ px: 2, py: 1.5, bgcolor: 'rgba(0,0,0,0.02)', display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                    <UserIcon size={18} style={{ color: '#3b82f6' }} />
-                    <Typography variant="subtitle2" fontWeight={700} color="text.primary">
-                        Personal Information
-                    </Typography>
-                </Box>
                 <Box sx={{ p: 2 }}>
                     <PersonalInfoForm
                         personal={cv.personal}
@@ -111,20 +130,38 @@ export default function EditorPanel({
                 </Box>
             </Paper>
 
-            <Divider sx={{ mb: 2, borderStyle: 'dashed' }} />
-
-            {/* Sortable Sections */}
             <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
                 onDragEnd={handleDragEnd}
             >
+                {/* Category: Professional Background */}
+                <CategoryHeader title="Professional Background" icon={Briefcase} />
                 <SortableContext
-                    items={cv.sections.map(s => s.id)}
+                    items={coreSections.map(s => s.id)}
                     strategy={verticalListSortingStrategy}
                 >
                     <Stack spacing={2}>
-                        {cv.sections.map(section => (
+                        {coreSections.map(section => (
+                            <SectionWrapper
+                                key={section.id}
+                                section={section}
+                                onToggleVisibility={toggleSectionVisibility}
+                            >
+                                {renderSectionForm(section)}
+                            </SectionWrapper>
+                        ))}
+                    </Stack>
+                </SortableContext>
+
+                {/* Category: Skills & More */}
+                <CategoryHeader title="Skills & Achievements" icon={Award} />
+                <SortableContext
+                    items={extraSections.map(s => s.id)}
+                    strategy={verticalListSortingStrategy}
+                >
+                    <Stack spacing={2}>
+                        {extraSections.map(section => (
                             <SectionWrapper
                                 key={section.id}
                                 section={section}
@@ -136,6 +173,8 @@ export default function EditorPanel({
                     </Stack>
                 </SortableContext>
             </DndContext>
+            
+            <Box sx={{ height: 40 }} /> {/* Spacer at bottom */}
         </Box>
     )
 }
