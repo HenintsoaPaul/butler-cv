@@ -23,6 +23,7 @@ import {
     PanelLeftClose as CloseIcon,
     PanelLeft as OpenIcon
 } from 'lucide-react'
+import { exportToPdf } from './utils/pdfUtils'
 
 function SaveIndicator({ status }) {
     const config = {
@@ -45,6 +46,7 @@ function SaveIndicator({ status }) {
 export default function App() {
     const previewRef = useRef(null)
     const [editorVisible, setEditorVisible] = useState(true)
+    const [isExporting, setIsExporting] = useState(false)
 
     const {
         cv,
@@ -64,6 +66,13 @@ export default function App() {
         contentRef: previewRef,
         documentTitle: `${cv.personal.name || 'CV'} - Resume`,
     })
+
+    const handleExport = async () => {
+        setIsExporting(true)
+        const filename = `${(cv.personal.name || 'CV').replace(/\s+/g, '_')}_Resume.pdf`
+        await exportToPdf(previewRef.current, filename)
+        setIsExporting(false)
+    }
 
     return (
         <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', bgcolor: 'background.default' }}>
@@ -147,20 +156,32 @@ export default function App() {
                             Reset
                         </Button>
 
-                        <Button
-                            variant="contained"
-                            startIcon={<DownloadIcon size={16} />}
-                            onClick={handlePrint}
-                            disableElevation
-                            sx={{
-                                background: 'linear-gradient(to right, #2563eb, #3b82f6)',
-                                '&:hover': {
-                                    background: 'linear-gradient(to right, #1d4ed8, #2563eb)',
-                                }
-                            }}
-                        >
-                            Export PDF
-                        </Button>
+                        <Stack direction="row" spacing={1}>
+                             <Button
+                                variant="outlined"
+                                onClick={handlePrint}
+                                size="small"
+                                sx={{ display: { xs: 'none', sm: 'flex' }, borderRadius: 2 }}
+                            >
+                                Print
+                            </Button>
+                            <Button
+                                variant="contained"
+                                startIcon={isExporting ? <LoaderIcon size={16} className="animate-spin" /> : <DownloadIcon size={16} />}
+                                onClick={handleExport}
+                                disabled={isExporting}
+                                disableElevation
+                                sx={{
+                                    borderRadius: 2,
+                                    background: 'linear-gradient(to right, #2563eb, #3b82f6)',
+                                    '&:hover': {
+                                        background: 'linear-gradient(to right, #1d4ed8, #2563eb)',
+                                    }
+                                }}
+                            >
+                                {isExporting ? 'Generating...' : 'Download PDF'}
+                            </Button>
+                        </Stack>
                     </Stack>
                 </Toolbar>
 
