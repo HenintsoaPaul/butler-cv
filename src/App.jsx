@@ -142,6 +142,7 @@ export default function App() {
                             onClick={() => setEditorVisible(!editorVisible)}
                             sx={{ display: { md: 'none' } }}
                             size="small"
+                            aria-label="Toggle editor"
                         >
                             {editorVisible ? <CloseIcon size={20} /> : <OpenIcon size={20} />}
                         </IconButton>
@@ -199,6 +200,7 @@ export default function App() {
                 {/* Editor */}
                 {editorVisible && (
                     <Box
+                        data-testid="editor-panel"
                         sx={{
                             width: { xs: '100%', md: 440, lg: 480 },
                             flexShrink: 0,
@@ -223,6 +225,7 @@ export default function App() {
 
                 {/* Preview */}
                 <Box
+                    data-testid="preview-panel"
                     sx={{
                         flex: 1,
                         overflow: 'hidden',

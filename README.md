@@ -41,7 +41,7 @@ A fast, minimal, and opinionated CV builder designed to create professional resu
 - **Icons**: [Lucide React](https://lucide.dev/)
 - **Drag & Drop**: [@dnd-kit](https://dndkit.com/)
 - **PDF Generation**: [html2canvas](https://html2canvas.hertzen.com/) & [jsPDF](https://github.com/parallax/jsPDF)
-- **Testing**: [Vitest](https://vitest.dev/) & [Testing Library](https://testing-library.com/)
+- **Testing**: [Vitest](https://vitest.dev/), [Testing Library](https://testing-library.com/) & [Playwright](https://playwright.dev/)
 
 ---
 
@@ -60,6 +60,9 @@ git clone https://github.com/HenintsoaPaul/butler-cv.git
 
 # Install dependencies
 npm install
+
+# Install Playwright browsers (for E2E tests)
+npx playwright install
 ```
 
 ### Development
@@ -71,14 +74,17 @@ npm run dev
 
 ### Testing
 
-We use Vitest for regression testing.
+We use Vitest for unit/integration testing and Playwright for end-to-end testing.
 
 ```bash
-# Run all tests
+# Run unit tests
 npm test
 
-# Run tests in watch mode
-npm run test -- --watch
+# Run e2e tests
+npm run test:e2e
+
+# Run e2e tests in UI mode
+npx playwright test --ui
 ```
 
 ---
